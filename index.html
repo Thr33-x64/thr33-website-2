@@ -1,0 +1,1191 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<!--
+============================================================
+THR33 IT SOLUTIONS · SITIO WEB OFICIAL
+"Tecnología al alcance de todos" · Pénjamo, Guanajuato, México
+============================================================
+ARQUITECTURA
+· SPA ligera en HTML5 + CSS + JS vanilla (sin frameworks ni dependencias).
+· Router por hash:  #/  #/servicios  #/productos  #/paginas-web
+  #/punto-de-venta  #/privacidad  #/nosotros  #/blog  #/contacto  #/faq
+· Datos centralizados en el objeto SITE (teléfono, whatsapp, email, horarios,
+  redes, servicios, productos, faqs). Edita SOLO ese bloque para actualizar
+  contenido sin tocar el resto del código.
+· Componentes reutilizables en JS: navbar, footer, cards de servicio,
+  cards de producto, FAQ, formulario de contacto, secciones CTA.
+
+EJECUCIÓN LOCAL
+1) Doble clic en index.html, o mejor:
+2) python -m http.server 8080  →  http://localhost:8080
+
+DEPLIEGUE (GitHub + Cloudflare Pages)
+1) Crea un repositorio en GitHub y sube este archivo como index.html.
+2) Cloudflare Pages → Create project → Connect to Git → elige el repo.
+3) Build command: (vacío) · Publish directory: / · Deploy.
+4) Agrega dominio personalizado cuando lo tengas y actualiza
+   SITE.url y las etiquetas canonical / OG.
+
+ROBOTS.TXT (crear como archivo separado al desplegar)
+User-agent: *
+Allow: /
+Sitemap: https://TU-DOMINIO/sitemap.xml
+
+SITEMAP.XML (crear como archivo separado)
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://TU-DOMINIO/</loc></url>
+  <url><loc>https://TU-DOMINIO/#/servicios</loc></url>
+  <url><loc>https://TU-DOMINIO/#/productos</loc></url>
+  <url><loc>https://TU-DOMINIO/#/paginas-web</loc></url>
+  <url><loc>https://TU-DOMINIO/#/punto-de-venta</loc></url>
+  <url><loc>https://TU-DOMINIO/#/privacidad</loc></url>
+  <url><loc>https://TU-DOMINIO/#/nosotros</loc></url>
+  <url><loc>https://TU-DOMINIO/#/blog</loc></url>
+  <url><loc>https://TU-DOMINIO/#/contacto</loc></url>
+  <url><loc>https://TU-DOMINIO/#/faq</loc></url>
+</urlset>
+
+FORMULARIO DE CONTACTO
+· Sin backend: el formulario compone el mensaje y lo envía por WhatsApp.
+· Para recibirlo también por correo, registra un endpoint gratuito
+  (Formspree / Web3Forms / EmailJS) y escribe la URL en SITE.forms.endpoint.
+
+GOOGLE MAPS (pendiente de local físico)
+· En la página de contacto existe el contenedor marcado como
+  id="mapPlaceholder". Cuando haya local, sustituye su contenido por el
+  iframe de Google Maps y agrega la dirección en SITE.address.
+
+LOGOTIPO
+· El isotipo proporcionado está vectorizado como símbolo SVG (#iso) y se usa
+  en navbar, footer, favicon, marcas de agua y tarjetas.
+· Si más adelante tienes los archivos originales, colócalos en /assets y
+  sustituye el símbolo manteniendo los mismos puntos de uso.
+============================================================
+-->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thr33 IT Solutions | Tecnología al alcance de todos en Pénjamo, Guanajuato</title>
+<meta name="description" content="Thr33 IT Solutions: soporte técnico, hardware, redes, páginas web, punto de venta y privacidad digital en Pénjamo, Guanajuato. Tecnología al alcance de todos.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thr33-it-solutions.example/">
+<meta name="theme-color" content="#0a0a0f">
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Thr33 IT Solutions">
+<meta property="og:title" content="Thr33 IT Solutions | Tecnología al alcance de todos">
+<meta property="og:description" content="Soporte técnico, hardware, redes, páginas web, punto de venta y privacidad digital en Pénjamo, Guanajuato.">
+<meta property="og:locale" content="es_MX">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Thr33 IT Solutions">
+<meta name="twitter:description" content="Tecnología al alcance de todos. Pénjamo, Guanajuato.">
+
+<!-- Favicon: isotipo Thr33 -->
+<link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><rect width="96" height="96" rx="20" fill="%230a0a0f"/><g fill="%237c3aed"><path d="M4 20 H52 L44 30 H34 V68 L24 78 V30 H12 Z"/><path d="M56 20 H66 L76 32 V42 L70 48 L76 54 V66 L66 78 H40 L48 68 H62 L68 62 V56 L62 50 H46 L54 42 H62 L68 36 V34 L64 30 H48 Z"/></g></svg>'>
+
+<!-- Tipografías: Inter (texto) + Space Grotesk (títulos) via Fontsource CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/600.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/space-grotesk@latest/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/space-grotesk@latest/700.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Thr33 IT Solutions",
+  "slogan": "Tecnología al alcance de todos",
+  "description": "Soporte técnico, hardware, redes, páginas web, punto de venta y privacidad digital en Pénjamo, Guanajuato.",
+  "telephone": "+52 469 113 1272",
+  "email": "Thr33_ITSolutions@proton.me",
+  "url": "https://thr33-it-solutions.example/",
+  "priceRange": "$$",
+  "address": { "@type": "PostalAddress", "addressLocality": "Pénjamo", "addressRegion": "Guanajuato", "addressCountry": "MX" },
+  "areaServed": ["Pénjamo", "Abasolo", "La Piedad", "Irapuato", "Valle de Santiago"],
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "15:00", "closes": "22:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "08:00", "closes": "22:00" }
+  ],
+  "sameAs": [
+    "https://www.instagram.com/leonel_ramirez_333",
+    "https://www.facebook.com/share/1rpybpszeu/",
+    "https://github.com/Thr33-x64"
+  ]
+}
+</script>
+
+<style>
+/* ============ BASE ============ */
+:root{
+  --bg:#0a0a0f; --bg2:#0e0e16; --surface:#14141d; --surface2:#1a1a27;
+  --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.14);
+  --text:#f4f4f8; --muted:#a2a2b4; --muted2:#7c7c8f;
+  --purple:#7c3aed; --purple2:#a78bfa; --purple-deep:#4c1d95;
+  --wa:#25d366;
+  --radius:16px; --radius-sm:10px;
+  --font-body:'Inter',system-ui,sans-serif; --font-head:'Space Grotesk',var(--font-body);
+  --shadow:0 10px 40px rgba(0,0,0,.45);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+html,body{overflow-x:clip}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block;height:auto}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+h1,h2,h3,h4{font-family:var(--font-head);line-height:1.15;letter-spacing:-.01em}
+::selection{background:var(--purple);color:#fff}
+:focus-visible{outline:2px solid var(--purple2);outline-offset:3px;border-radius:4px}
+.container{width:min(1120px,100% - 3rem);margin-inline:auto}
+.section{padding-block:clamp(4rem,9vw,6.5rem)}
+.section-alt{background:var(--bg2);border-block:1px solid var(--border)}
+.skip-link{position:absolute;left:-999px;top:0;background:var(--purple);color:#fff;padding:.7rem 1.2rem;border-radius:0 0 10px 0;z-index:200}
+.skip-link:focus{left:0}
+
+/* ============ UTILIDADES ============ */
+.eyebrow{display:inline-flex;align-items:center;gap:.55rem;font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--purple2)}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--purple)}
+.title{font-size:clamp(1.7rem,4vw,2.6rem);font-weight:700;margin:.7rem 0 .9rem}
+.lead{color:var(--muted);font-size:clamp(1rem,1.4vw,1.12rem);max-width:62ch}
+.grad{background:linear-gradient(100deg,var(--purple2),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;min-height:48px;padding:.75rem 1.5rem;border-radius:12px;font-weight:600;font-size:.95rem;border:1px solid transparent;transition:transform .2s ease,box-shadow .2s ease,background .2s ease,border-color .2s ease;cursor:pointer}
+.btn svg{width:18px;height:18px;flex:none}
+.btn-primary{background:var(--purple);color:#fff}
+.btn-primary:hover{background:#8b5cf6;transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,.35)}
+.btn-ghost{border-color:var(--border2);color:var(--text);background:rgba(255,255,255,.02)}
+.btn-ghost:hover{border-color:var(--purple);color:var(--purple2);transform:translateY(-2px)}
+.btn-sm{min-height:42px;padding:.55rem 1.1rem;font-size:.88rem}
+.chip{display:inline-flex;align-items:center;gap:.45rem;padding:.4rem .85rem;border:1px solid var(--border);border-radius:999px;font-size:.82rem;color:var(--muted);background:rgba(255,255,255,.02)}
+.chip svg{width:14px;height:14px;color:var(--purple2)}
+.icon-box{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.28);color:var(--purple2);flex:none}
+.icon-box svg{width:22px;height:22px}
+
+/* ============ REVEAL ============ */
+[data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+[data-reveal].in{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  [data-reveal]{opacity:1;transform:none;transition:none}
+  *{animation:none!important;transition:none!important}
+}
+
+/* ============ HEADER ============ */
+.header{position:fixed;inset:0 0 auto 0;z-index:100;background:rgba(10,10,15,.72);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:70px}
+.brand{display:flex;align-items:center;gap:.7rem}
+.brand-iso{width:38px;height:38px;color:var(--purple)}
+.brand-txt{line-height:1.1}
+.brand-name{font-family:var(--font-head);font-weight:700;font-size:1.06rem;letter-spacing:.02em}
+.brand-name b{color:var(--purple2)}
+.brand-sub{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted2)}
+.nav{display:flex;align-items:center;gap:.2rem}
+.nav a{padding:.55rem .8rem;border-radius:10px;font-size:.9rem;font-weight:500;color:var(--muted);transition:color .2s,background .2s}
+.nav a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.nav a[aria-current="page"]{color:var(--purple2)}
+.header-cta{display:flex;align-items:center;gap:.6rem}
+.menu-btn{display:none;width:44px;height:44px;border-radius:10px;border:1px solid var(--border);place-items:center}
+.menu-btn svg{width:22px;height:22px}
+.menu-panel{display:none}
+@media (max-width: 960px){
+  .nav{display:none}
+  .menu-btn{display:grid}
+  .menu-panel{display:block;position:fixed;top:70px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);padding:1rem 1.5rem 1.6rem;transform:translateY(-8px);opacity:0;pointer-events:none;transition:.25s ease;z-index:99}
+  .menu-panel.open{transform:none;opacity:1;pointer-events:auto}
+  .menu-panel a{display:block;padding:.85rem .6rem;border-radius:10px;font-weight:500;color:var(--muted);border-bottom:1px solid var(--border)}
+  .menu-panel a:hover,.menu-panel a[aria-current="page"]{color:var(--purple2)}
+}
+@media (min-width: 961px){ .menu-panel{display:none!important} }
+
+/* ============ HERO ============ */
+.hero{position:relative;padding-top:calc(70px + clamp(4rem,10vw,7rem));padding-bottom:clamp(4rem,9vw,6.5rem);overflow:clip}
+.hero::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(600px 340px at 78% 18%,rgba(124,58,237,.16),transparent 65%),
+  linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:auto,44px 44px,44px 44px;
+  mask-image:radial-gradient(80% 70% at 50% 35%,#000 30%,transparent 100%)}
+.hero-iso{position:absolute;right:-4%;top:12%;width:min(46vw,560px);height:auto;color:var(--text);opacity:.035;pointer-events:none}
+.hero-inner{position:relative}
+.hero h1{font-size:clamp(2.4rem,6.4vw,4.2rem);font-weight:700;max-width:16ch;margin:.9rem 0 1.1rem}
+.hero-cta{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2rem}
+.hero-meta{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:2.4rem}
+.hero-meta li{display:inline-flex;align-items:center;gap:.5rem;font-size:.82rem;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:.42rem .95rem;background:rgba(255,255,255,.02)}
+.hero-meta li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--purple)}
+
+/* ============ CARDS / GRIDS ============ */
+.grid{display:grid;gap:1.2rem}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+@media (max-width: 960px){ .grid-3,.grid-4{grid-template-columns:repeat(2,1fr)} }
+@media (max-width: 620px){ .grid-2,.grid-3,.grid-4{grid-template-columns:1fr} }
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.6rem;transition:border-color .25s,transform .25s,box-shadow .25s;position:relative}
+.card:hover{border-color:rgba(124,58,237,.45);transform:translateY(-4px);box-shadow:var(--shadow)}
+.card h3{font-size:1.12rem;margin:1rem 0 .5rem}
+.card p{color:var(--muted);font-size:.93rem}
+.card-link{position:absolute;inset:0}
+.card .arrow{position:absolute;top:1.4rem;right:1.4rem;color:var(--muted2);transition:.25s}
+.card:hover .arrow{color:var(--purple2);transform:translateX(4px)}
+.card .arrow svg{width:18px;height:18px}
+.list-check{display:grid;gap:.5rem;margin-top:1rem}
+.list-check li{display:flex;gap:.6rem;align-items:flex-start;font-size:.9rem;color:var(--muted)}
+.list-check li svg{width:16px;height:16px;color:var(--purple2);flex:none;margin-top:.25rem}
+
+/* ============ PRODUCTOS ============ */
+.prod-card{display:grid;grid-template-columns:1fr 1.2fr;overflow:hidden;padding:0}
+.prod-card .prod-img{position:relative;min-height:260px}
+.prod-card .prod-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.prod-body{padding:1.8rem}
+.prod-body h3{font-size:1.35rem;margin:.6rem 0 .6rem}
+.prod-cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.4rem}
+@media (max-width: 860px){ .prod-card{grid-template-columns:1fr} .prod-card .prod-img{min-height:220px} }
+
+/* ============ PASOS ============ */
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;counter-reset:step}
+.step{position:relative;padding:1.4rem 1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.step::before{counter-increment:step;content:"0" counter(step);font-family:var(--font-head);font-weight:700;font-size:1.5rem;color:var(--purple);opacity:.9}
+.step h3{font-size:1rem;margin:.7rem 0 .4rem}
+.step p{font-size:.86rem;color:var(--muted)}
+.step::after{content:"";position:absolute;top:50%;right:-1rem;width:1rem;height:1px;background:var(--border2)}
+.step:last-child::after{display:none}
+@media (max-width: 960px){ .steps{grid-template-columns:repeat(2,1fr)} .step::after{display:none} }
+@media (max-width: 560px){ .steps{grid-template-columns:1fr} }
+
+/* ============ SPLIT ============ */
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(2rem,5vw,4rem);align-items:center}
+.split .media{border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);position:relative;box-shadow:var(--shadow)}
+.split .media img{width:100%;height:100%;object-fit:cover}
+@media (max-width: 900px){ .split{grid-template-columns:1fr} }
+
+/* ============ FAQ ============ */
+.faq-item{border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);margin-bottom:.7rem;overflow:hidden}
+.faq-q{width:100%;display:flex;justify-content:space-between;align-items:center;gap:1rem;text-align:left;padding:1.05rem 1.2rem;font-weight:600;font-size:.97rem}
+.faq-q svg{width:18px;height:18px;color:var(--purple2);transition:transform .3s;flex:none}
+.faq-item.open .faq-q svg{transform:rotate(45deg)}
+.faq-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease}
+.faq-item.open .faq-a{grid-template-rows:1fr}
+.faq-a > div{overflow:hidden}
+.faq-a p{padding:0 1.2rem 1.15rem;color:var(--muted);font-size:.93rem}
+
+/* ============ FORMULARIO ============ */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-grid .full{grid-column:1/-1}
+.field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.4rem;color:var(--text)}
+.field input,.field select,.field textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:.8rem .95rem;color:var(--text);font:inherit;font-size:.95rem;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--purple)}
+.field textarea{min-height:120px;resize:vertical}
+.field select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat}
+.field select option{background:var(--surface);color:var(--text)}
+.field .err{display:none;color:#f87171;font-size:.8rem;margin-top:.35rem}
+.field.invalid input,.field.invalid textarea{border-color:#f87171}
+.field.invalid .err{display:block}
+.form-status{margin-top:.9rem;font-size:.9rem;color:var(--purple2);min-height:1.4em}
+.form-note{margin-top:.8rem;font-size:.82rem;color:var(--muted2)}
+@media (max-width: 620px){ .form-grid{grid-template-columns:1fr} }
+
+/* ============ EMPTY STATES ============ */
+.empty{border:1px dashed var(--border2);border-radius:var(--radius);padding:3rem 1.5rem;text-align:center;color:var(--muted);background:rgba(255,255,255,.015)}
+.empty .icon-box{margin:0 auto 1rem}
+.empty h3{font-size:1.1rem;color:var(--text);margin-bottom:.4rem}
+.empty p{font-size:.92rem;max-width:46ch;margin-inline:auto}
+
+/* ============ MAPA ============ */
+.map-box{border:1px dashed var(--border2);border-radius:var(--radius);min-height:260px;display:grid;place-items:center;text-align:center;padding:2rem;background:
+  linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px) 0 0/36px 36px,
+  linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px) 0 0/36px 36px, var(--surface)}
+.map-box h3{font-size:1.15rem;margin:.8rem 0 .3rem}
+.map-box p{color:var(--muted);font-size:.9rem}
+
+/* ============ FOOTER ============ */
+.footer{border-top:1px solid var(--border);background:var(--bg2);padding-top:4rem;position:relative;overflow:clip}
+.footer-iso{position:absolute;right:-60px;bottom:-60px;width:340px;height:340px;color:var(--text);opacity:.03;pointer-events:none}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:2.5rem;padding-bottom:3rem}
+.footer h4{font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);margin-bottom:1.1rem}
+.footer-col a,.footer-col li{display:block;padding:.28rem 0;color:var(--muted);font-size:.92rem}
+.footer-col a:hover{color:var(--purple2)}
+.footer-social{display:flex;gap:.6rem;margin-top:1.2rem}
+.footer-social a{width:40px;height:40px;border:1px solid var(--border);border-radius:10px;display:grid;place-items:center;color:var(--muted);transition:.2s}
+.footer-social a:hover{color:var(--purple2);border-color:var(--purple);transform:translateY(-2px)}
+.footer-social svg{width:18px;height:18px}
+.footer-bottom{border-top:1px solid var(--border);padding:1.4rem 0;display:flex;flex-wrap:wrap;gap:.6rem;justify-content:space-between;align-items:center;color:var(--muted2);font-size:.84rem}
+.footer-bottom .made{display:inline-flex;align-items:center;gap:.45rem}
+.footer-bottom .made svg{width:16px;height:16px;color:var(--purple)}
+@media (max-width: 900px){ .footer-grid{grid-template-columns:1fr 1fr} }
+@media (max-width: 560px){ .footer-grid{grid-template-columns:1fr} }
+
+/* ============ WHATSAPP FLOTANTE ============ */
+.wa-float{position:fixed;right:1.2rem;bottom:1.2rem;z-index:90;width:58px;height:58px;border-radius:50%;background:var(--wa);color:#0b0b10;display:grid;place-items:center;box-shadow:0 10px 30px rgba(37,211,102,.35);transition:transform .2s}
+.wa-float:hover{transform:translateY(-3px) scale(1.04)}
+.wa-float svg{width:28px;height:28px}
+.wa-float::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid rgba(37,211,102,.5);animation:waPulse 2.4s ease-out infinite}
+@keyframes waPulse{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.55);opacity:0}}
+
+/* ============ PÁGINA HEADER ============ */
+.page-head{padding-top:calc(70px + clamp(3rem,7vw,5rem));padding-bottom:clamp(2.5rem,6vw,4rem);position:relative;overflow:clip}
+.page-head::before{content:"";position:absolute;inset:0;background:radial-gradient(520px 280px at 20% 0%,rgba(124,58,237,.14),transparent 70%)}
+.page-head .container{position:relative}
+.page-head h1{font-size:clamp(2rem,5vw,3.2rem);margin:.8rem 0 .8rem;max-width:22ch}
+
+/* ============ VARIOS ============ */
+.section-head{max-width:70ch;margin-bottom:clamp(2rem,5vw,3rem)}
+.center{text-align:center}
+.center .section-head{margin-inline:auto}
+.center .eyebrow::before{display:none}
+.divider-dot{color:var(--purple2)}
+.pay-grid{display:flex;flex-wrap:wrap;gap:.7rem}
+.value-card{text-align:left}
+.tag-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+main{min-height:60vh}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#app">Saltar al contenido</a>
+
+<!-- Isotipo Thr33 (vectorizado del original proporcionado) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="iso" viewBox="0 0 96 96">
+    <path fill="currentColor" d="M4 20 H52 L44 30 H34 V68 L24 78 V30 H12 Z"/>
+    <path fill="currentColor" d="M56 20 H66 L76 32 V42 L70 48 L76 54 V66 L66 78 H40 L48 68 H62 L68 62 V56 L62 50 H46 L54 42 H62 L68 36 V34 L64 30 H48 Z"/>
+  </symbol>
+</svg>
+
+<!-- ============ HEADER ============ -->
+<header class="header" id="header">
+  <div class="container header-inner">
+    <a class="brand" href="#/" aria-label="Thr33 IT Solutions, ir al inicio">
+      <svg class="brand-iso" aria-hidden="true"><use href="#iso"/></svg>
+      <span class="brand-txt">
+        <span class="brand-name">THR<b>33</b></span><br>
+        <span class="brand-sub">IT Solutions</span>
+      </span>
+    </a>
+    <nav class="nav" aria-label="Navegación principal">
+      <a href="#/" data-route="/">Inicio</a>
+      <a href="#/servicios" data-route="/servicios">Servicios</a>
+      <a href="#/productos" data-route="/productos">Productos</a>
+      <a href="#/paginas-web" data-route="/paginas-web">Páginas web</a>
+      <a href="#/punto-de-venta" data-route="/punto-de-venta">Punto de venta</a>
+      <a href="#/privacidad" data-route="/privacidad">Privacidad</a>
+      <a href="#/nosotros" data-route="/nosotros">Nosotros</a>
+      <a href="#/contacto" data-route="/contacto">Contacto</a>
+    </nav>
+    <div class="header-cta">
+      <a class="btn btn-primary btn-sm" id="headerWa" href="https://wa.me/5214691131272" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.158 11.892c0 2.096.547 4.142 1.588 6.191L.057 21.752l3.768-.987a11.87 11.87 0 005.225 1.316h.004c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        WhatsApp
+      </a>
+      <button class="menu-btn" id="menuBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="menuPanel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<nav class="menu-panel" id="menuPanel" aria-label="Navegación móvil">
+  <a href="#/" data-route="/">Inicio</a>
+  <a href="#/servicios" data-route="/servicios">Servicios</a>
+  <a href="#/productos" data-route="/productos">Productos</a>
+  <a href="#/paginas-web" data-route="/paginas-web">Páginas web</a>
+  <a href="#/punto-de-venta" data-route="/punto-de-venta">Punto de venta</a>
+  <a href="#/privacidad" data-route="/privacidad">Privacidad</a>
+  <a href="#/nosotros" data-route="/nosotros">Nosotros</a>
+  <a href="#/blog" data-route="/blog">Blog</a>
+  <a href="#/faq" data-route="/faq">Preguntas frecuentes</a>
+  <a href="#/contacto" data-route="/contacto">Contacto</a>
+</nav>
+
+<main id="app"></main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <svg class="footer-iso" aria-hidden="true"><use href="#iso"/></svg>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <a class="brand" href="#/" aria-label="Thr33 IT Solutions">
+          <svg class="brand-iso" aria-hidden="true"><use href="#iso"/></svg>
+          <span class="brand-txt"><span class="brand-name">THR<b>33</b></span><br><span class="brand-sub">IT Solutions</span></span>
+        </a>
+        <p style="color:var(--muted);font-size:.92rem;margin-top:1rem;max-width:30ch">Tecnología al alcance de todos.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/leonel_ramirez_333" target="_blank" rel="noopener" aria-label="Instagram de Thr33 IT Solutions">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://www.facebook.com/share/1rpybpszeu/" target="_blank" rel="noopener" aria-label="Facebook de Thr33 IT Solutions">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://github.com/Thr33-x64" target="_blank" rel="noopener" aria-label="GitHub de Thr33 IT Solutions">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Enlaces</h4>
+        <a href="#/">Inicio</a>
+        <a href="#/servicios">Servicios</a>
+        <a href="#/productos">Productos</a>
+        <a href="#/paginas-web">Páginas web</a>
+        <a href="#/punto-de-venta">Punto de venta</a>
+        <a href="#/privacidad">Privacidad</a>
+        <a href="#/nosotros">Nosotros</a>
+        <a href="#/blog">Blog</a>
+        <a href="#/contacto">Contacto</a>
+      </div>
+      <div class="footer-col">
+        <h4>Servicios</h4>
+        <a href="#/servicios">Soporte y mantenimiento</a>
+        <a href="#/servicios">Hardware</a>
+        <a href="#/servicios">Redes y conectividad</a>
+        <a href="#/servicios">Soluciones para negocios</a>
+        <a href="#/paginas-web">Desarrollo web</a>
+        <a href="#/privacidad">Privacidad digital</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <a href="tel:+524691131272">+52 469 113 1272</a>
+        <a href="mailto:Thr33_ITSolutions@proton.me">Thr33_ITSolutions@proton.me</a>
+        <ul style="margin-top:.6rem">
+          <li style="color:var(--muted);font-size:.9rem">Lun a Vie · 15:00 a 22:00</li>
+          <li style="color:var(--muted);font-size:.9rem">Sáb y Dom · 08:00 a 22:00</li>
+          <li style="color:var(--muted);font-size:.9rem;margin-top:.6rem">Pénjamo, Guanajuato y alrededores.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Thr33 IT Solutions. Todos los derechos reservados.</span>
+      <span class="made">Hecho por Thr33 <svg aria-hidden="true"><use href="#iso"/></svg></span>
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp flotante -->
+<a class="wa-float" href="https://wa.me/5214691131272" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.158 11.892c0 2.096.547 4.142 1.588 6.191L.057 21.752l3.768-.987a11.87 11.87 0 005.225 1.316h.004c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
+
+<noscript>
+  <div style="padding:2rem;text-align:center">
+    <h1>Thr33 IT Solutions</h1>
+    <p>Tecnología al alcance de todos · Pénjamo, Guanajuato.</p>
+    <p>WhatsApp: <a href="https://wa.me/5214691131272">+52 469 113 1272</a> ·
+    Correo: <a href="mailto:Thr33_ITSolutions@proton.me">Thr33_ITSolutions@proton.me</a></p>
+    <p>Activa JavaScript para navegar por el sitio.</p>
+  </div>
+</noscript>
+
+<script>
+/* ==========================================================
+   DATOS CENTRALIZADOS · edita aquí todo el contenido variable
+   ========================================================== */
+const SITE = {
+  name: "Thr33 IT Solutions",
+  slogan: "Tecnología al alcance de todos",
+  url: "https://thr33-it-solutions.example/",
+  phone: "+52 469 113 1272",
+  phoneHref: "tel:+524691131272",
+  whatsapp: "https://wa.me/5214691131272",
+  email: "Thr33_ITSolutions@proton.me",
+  location: "Pénjamo, Guanajuato, México",
+  coverage: ["Pénjamo", "Abasolo", "La Piedad", "Irapuato", "Valle de Santiago"],
+  hours: [ { d: "Lunes a viernes", h: "15:00 – 22:00" }, { d: "Sábado y domingo", h: "08:00 – 22:00" } ],
+  social: {
+    instagram: "https://www.instagram.com/leonel_ramirez_333",
+    facebook: "https://www.facebook.com/share/1rpybpszeu/",
+    github: "https://github.com/Thr33-x64"
+  },
+  payments: ["Transferencia bancaria", "Efectivo", "Ethereum (ETH)", "Monero (XMR)", "Zcash (ZEC)", "USDT"],
+  forms: { endpoint: null }, /* <- pega aquí tu URL de Formspree/Web3Forms para recibir el formulario por correo */
+  images: {
+    pixel: "https://image.qwenlm.ai/public_source/47bd55c7-770d-4728-9b89-286df7c02f9f/1b30de413-18ba-4e19-94a3-3ee824192828.png",
+    usb: "https://image.qwenlm.ai/public_source/47bd55c7-770d-4728-9b89-286df7c02f9f/1af1e4bc7-9836-47bf-aff4-ae1c902c283e.png",
+    web: "https://image.qwenlm.ai/public_source/47bd55c7-770d-4728-9b89-286df7c02f9f/176ead228-04af-4b1d-ad44-6991f70f0074.png",
+    pos: "https://image.qwenlm.ai/public_source/47bd55c7-770d-4728-9b89-286df7c02f9f/18234405b-1840-4b0c-9fba-42e92b2db6d8.png"
+  },
+  services: [
+    { id:"soporte", icon:"tool", title:"Soporte y mantenimiento", desc:"Cuidamos tus equipos para que trabajen rápido y seguros, en casa o en tu negocio.",
+      items:["Mantenimiento preventivo de computadoras, laptops y servidores","Mantenimiento correctivo","Limpieza de equipos","Formateo","Instalación de Windows","Instalación de Linux","Respaldo de información","Limpieza de virus y malware","Optimización de equipos lentos","Diagnóstico","Recuperación básica de archivos borrados","Administración remota de equipos"],
+      note:"El diagnóstico puede ser sin costo al contratar el servicio correspondiente." },
+    { id:"hardware", icon:"cpu", title:"Hardware", desc:"Mejoras y ensamble de equipos para alargar su vida útil o darles más potencia.",
+      items:["Actualización de RAM","Instalación de SSD","Instalación de NVMe","Actualización de GPU","Migración de HDD a SSD","Ensamble de computadoras","Diagnóstico de hardware","Asesoría para comprar equipos"] },
+    { id:"redes", icon:"wifi", title:"Redes y conectividad", desc:"Conexión estable y segura en tu hogar o negocio, cableada o inalámbrica.",
+      items:["Configuración de routers","Configuración de puntos de acceso","Configuración Wi-Fi","Compartir impresoras en red","Carpetas compartidas entre computadoras","Redes cableadas","Configuración de cámaras IP","Configuración de NAS","Configuración de respaldos automáticos","VPN para acceso remoto"],
+      explain:{ "VPN para acceso remoto":"Permite conectarte de forma segura a los recursos de tu empresa desde fuera." } },
+    { id:"negocios", icon:"briefcase", title:"Soluciones para negocios", desc:"Infraestructura y acompañamiento para PyMEs, comercios y startups.",
+      items:["Contratos de mantenimiento mensual","Administración de inventario de equipos","Servidores para PyMEs","Instalación de puntos de venta","Instalación y configuración de sistemas ERP","Administración remota de equipos","Migración de múltiples equipos a SSD"] },
+    { id:"web", icon:"code", title:"Desarrollo web", desc:"Presencia profesional en internet para tu negocio o proyecto.",
+      items:["Landing pages","Sitios web corporativos","Páginas web informativas profesionales"] },
+    { id:"privacidad", icon:"shield", title:"Privacidad y seguridad digital", desc:"Herramientas y asesoría para darte mayor control sobre tu información.",
+      items:["Google Pixel con GrapheneOS","USB con Tails","Asesorías de ciberseguridad","Configuración de antivirus empresariales (Kaspersky, ESET, Bitdefender)"] }
+  ],
+  products: [
+    { id:"pixel", cat:"Privacidad", name:"Pixel + GrapheneOS", img:"pixel",
+      desc:"Dispositivos configurados con GrapheneOS para usuarios que buscan mayor control, privacidad y seguridad en su experiencia móvil.",
+      features:["Mayor control sobre tu privacidad digital","Configuración enfocada en seguridad","Acompañamiento y orientación incluidos","Ideal para periodistas, profesionales y emprendedores"] },
+    { id:"tails", cat:"Privacidad", name:"USB con Tails", img:"usb",
+      desc:"Memorias USB preparadas con Tails, un sistema operativo enfocado en privacidad y seguridad para usos compatibles.",
+      features:["Sistema portátil enfocado en privacidad","Reduce la exposición innecesaria de tus datos","Úsalo en computadoras compatibles sin dejar rastro local","Asesoría para su uso correcto"] }
+  ],
+  webFeatures: ["Diseño profesional","Dominio","Hosting","Correo empresarial","Integración de WhatsApp","Google Maps","SEO local","Diseño responsive","Certificado SSL","Capacitación","Mantenimiento"],
+  posFeatures: ["Instalación","Configuración","Hardware","Software","Capacitación","Soporte","Administración de inventario"],
+  faqs: [
+    { q:"¿Dónde ofrecen servicio?", a:"Estamos en Pénjamo, Guanajuato, y damos servicio en Pénjamo, Abasolo, La Piedad, Irapuato y Valle de Santiago." },
+    { q:"¿Trabajan a domicilio?", a:"Sí. Ofrecemos servicio a domicilio en Pénjamo y alrededores, además de administración remota de equipos cuando el caso lo permite." },
+    { q:"¿Qué métodos de pago aceptan?", a:"Aceptamos transferencia bancaria, efectivo, Ethereum, Monero, Zcash y USDT." },
+    { q:"¿Puedo solicitar una cotización?", a:"Claro. Puedes solicitar una cotización sin compromiso por WhatsApp, teléfono o con el formulario de contacto de este sitio." },
+    { q:"¿Instalan Windows y Linux?", a:"Sí. Realizamos instalación de Windows y Linux, además de formateo, respaldos y optimización de equipos." },
+    { q:"¿Realizan mantenimiento a empresas?", a:"Sí. Ofrecemos contratos de mantenimiento mensual, administración remota de equipos, servidores para PyMEs y migración de múltiples equipos a SSD." },
+    { q:"¿Crean páginas web?", a:"Sí. Desarrollamos landing pages, sitios corporativos y páginas informativas profesionales, incluyendo dominio, hosting, correo empresarial, SSL y SEO local." }
+  ],
+  blog: [],        /* <- agrega aquí artículos: {title, date, category, author, excerpt, img} */
+  testimonials: [] /* <- agrega aquí testimonios reales: {name, text, date} */
+};
+
+/* ==========================================================
+   ICONOS (SVG inline)
+   ========================================================== */
+const ICONS = {
+  tool:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  cpu:'<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>',
+  wifi:'<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>',
+  briefcase:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>',
+  code:'<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,6 12,13 2,6"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  pin:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+  arrow:'<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+  check:'<polyline points="20 6 9 17 4 12"/>',
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  chat:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+  globe:'<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+  card:'<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>',
+  home:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  monitor:'<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+  lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'
+};
+const icon = (n, cls="") => '<svg class="'+cls+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONS[n]+'</svg>';
+const waLink = (msg) => SITE.whatsapp + "?text=" + encodeURIComponent(msg);
+const WA_DEFAULT = waLink("Hola Thr33 IT Solutions, me gustaría recibir información.");
+
+/* ==========================================================
+   COMPONENTES REUTILIZABLES
+   ========================================================== */
+const sectionHead = (eyebrow, title, lead, center=false) =>
+  '<div class="section-head'+(center?' center':'')+'" data-reveal>' +
+  '<span class="eyebrow">'+eyebrow+'</span><h2 class="title">'+title+'</h2>' +
+  (lead ? '<p class="lead">'+lead+'</p>' : '') + '</div>';
+
+const serviceCard = (s) =>
+  '<article class="card" data-reveal>' +
+  '<div class="icon-box">'+icon(s.icon)+'</div><h3>'+s.title+'</h3><p>'+s.desc+'</p>' +
+  '<span class="arrow">'+icon('arrow')+'</span><a class="card-link" href="#/servicios" aria-label="Ver categoría '+s.title+'"></a></article>';
+
+const productCard = (p, full=false) =>
+  '<article class="card prod-card" data-reveal>' +
+  '<div class="prod-img"><img src="'+SITE.images[p.img]+'" alt="'+p.name+'" loading="lazy" width="1024" height="1024"></div>' +
+  '<div class="prod-body"><span class="chip">'+icon('lock')+p.cat+'</span><h3>'+p.name+'</h3><p style="color:var(--muted)">'+p.desc+'</p>' +
+  '<ul class="list-check">'+p.features.map(f => '<li>'+icon('check')+f+'</li>').join('')+'</ul>' +
+  '<div class="prod-cta"><a class="btn btn-primary btn-sm" href="'+waLink('Hola, me interesa el producto '+p.name+'. Quisiera solicitar información.')+'" target="_blank" rel="noopener">Solicitar información</a>' +
+  '<a class="btn btn-ghost btn-sm" href="#/contacto">Contactar</a></div></div></article>';
+
+const faqList = () => SITE.faqs.map((f,i) =>
+  '<div class="faq-item" data-reveal><button class="faq-q" aria-expanded="false" aria-controls="faqa'+i+'">'+f.q+icon('plus')+'</button>' +
+  '<div class="faq-a" id="faqa'+i+'" role="region"><div><p>'+f.a+'</p></div></div></div>').join('');
+
+const emptyState = (ic, title, text, cta) =>
+  '<div class="empty" data-reveal><div class="icon-box">'+icon(ic)+'</div><h3>'+title+'</h3><p>'+text+'</p>' +
+  (cta || '') + '</div>';
+
+const mapPlaceholder = () =>
+  '<div class="map-box" id="mapPlaceholder" data-reveal>' +
+  '<div><div class="icon-box" style="margin:0 auto">'+icon('pin')+'</div>' +
+  '<h3>Pénjamo, Guanajuato</h3><p>Aquí se integrará Google Maps cuando contemos con local físico.<br>Por ahora, ofrecemos servicio a domicilio en Pénjamo y alrededores.</p></div></div>';
+
+const contactForm = () =>
+  '<form id="contactForm" novalidate data-reveal>' +
+  '<div class="form-grid">' +
+  '<div class="field"><label for="fName">Nombre *</label><input id="fName" name="nombre" type="text" autocomplete="name" placeholder="Tu nombre"><span class="err">Escribe tu nombre.</span></div>' +
+  '<div class="field"><label for="fPhone">Teléfono</label><input id="fPhone" name="telefono" type="tel" autocomplete="tel" placeholder="Ej. 469 000 0000"><span class="err">Escribe un teléfono válido.</span></div>' +
+  '<div class="field"><label for="fMail">Correo electrónico</label><input id="fMail" name="correo" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com"><span class="err">Escribe un correo válido.</span></div>' +
+  '<div class="field"><label for="fServ">Servicio de interés</label><select id="fServ" name="servicio">' +
+  ['Soporte y mantenimiento','Hardware','Redes y conectividad','Soluciones para negocios','Páginas web','Punto de venta','Privacidad y seguridad','Otro'].map(o => '<option>'+o+'</option>').join('') +
+  '</select></div>' +
+  '<div class="field full"><label for="fMsg">Mensaje *</label><textarea id="fMsg" name="mensaje" placeholder="Cuéntanos qué necesitas…"></textarea><span class="err">Cuéntanos brevemente qué necesitas.</span></div>' +
+  '</div>' +
+  '<div style="margin-top:1.2rem;display:flex;flex-wrap:wrap;gap:.8rem;align-items:center">' +
+  '<button type="submit" class="btn btn-primary">Solicitar cotización</button>' +
+  '<a class="btn btn-ghost" href="'+WA_DEFAULT+'" target="_blank" rel="noopener">Prefiero WhatsApp</a></div>' +
+  '<p class="form-status" id="formStatus" role="status" aria-live="polite"></p>' +
+  '<p class="form-note">Al enviar, abriremos WhatsApp con tu mensaje listo para enviarse. También puedes llamarnos o escribirnos por correo.</p>' +
+  '</form>';
+
+const contactCards = () =>
+  '<div class="grid grid-2" style="gap:1rem">' +
+  '<a class="card" style="padding:1.3rem" href="'+WA_DEFAULT+'" target="_blank" rel="noopener" data-reveal><div class="icon-box">'+icon('chat')+'</div><h3 style="font-size:1rem">WhatsApp</h3><p>'+SITE.phone+' · respuesta directa</p></a>' +
+  '<a class="card" style="padding:1.3rem" href="'+SITE.phoneHref+'" data-reveal><div class="icon-box">'+icon('phone')+'</div><h3 style="font-size:1rem">Teléfono</h3><p>'+SITE.phone+' · toca para llamar</p></a>' +
+  '<a class="card" style="padding:1.3rem" href="mailto:'+SITE.email+'" data-reveal><div class="icon-box">'+icon('mail')+'</div><h3 style="font-size:1rem">Correo</h3><p style="word-break:break-all">'+SITE.email+'</p></a>' +
+  '<div class="card" style="padding:1.3rem" data-reveal><div class="icon-box">'+icon('clock')+'</div><h3 style="font-size:1rem">Horario</h3>' +
+  SITE.hours.map(h => '<p>'+h.d+' · '+h.h+'</p>').join('') + '</div></div>';
+
+const ctaBand = (title, text, primary, primaryHref, ghost) =>
+  '<section class="section section-alt"><div class="container center" data-reveal>' +
+  '<h2 class="title" style="max-width:26ch;margin-inline:auto">'+title+'</h2><p class="lead" style="margin-inline:auto">'+text+'</p>' +
+  '<div class="hero-cta" style="justify-content:center"><a class="btn btn-primary" href="'+primaryHref+'">'+primary+'</a>' +
+  '<a class="btn btn-ghost" href="'+WA_DEFAULT+'" target="_blank" rel="noopener">'+(ghost||'Habla con nosotros')+'</a></div></div></section>';
+
+/* ==========================================================
+   PÁGINAS
+   ========================================================== */
+function pageHome(){
+  const s = SITE;
+  return `
+  <section class="hero">
+    <svg class="hero-iso" aria-hidden="true"><use href="#iso"/></svg>
+    <div class="container hero-inner">
+      <span class="eyebrow" data-reveal>Pénjamo, Guanajuato · México</span>
+      <h1 data-reveal>Tecnología al alcance de <span class="grad">todos</span></h1>
+      <p class="lead" data-reveal>Soluciones tecnológicas profesionales para personas, emprendedores y negocios. Soporte, hardware, redes, páginas web y privacidad digital, explicadas en lenguaje claro.</p>
+      <div class="hero-cta" data-reveal>
+        <a class="btn btn-primary" href="#/servicios">Conoce nuestros servicios ${icon('arrow')}</a>
+        <a class="btn btn-ghost" href="${WA_DEFAULT}" target="_blank" rel="noopener">Habla con nosotros</a>
+      </div>
+      <ul class="hero-meta" data-reveal>
+        <li>Privacidad</li><li>Libertad</li><li>Soberanía tecnológica</li><li>Servicio a domicilio en Pénjamo</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split">
+      <div data-reveal>
+        ${sectionHead('Quiénes somos', 'Una empresa tecnológica de Pénjamo, para su gente', '')}
+        <p class="lead" style="margin-top:-.4rem">Somos ${s.name}. Acercamos soporte técnico, hardware, redes, desarrollo web y soluciones de privacidad a personas, emprendedores, comerciantes y negocios de Pénjamo y sus alrededores, con un trato cercano y lenguaje claro, sin tecnicismos innecesarios.</p>
+        <div class="tag-row">
+          <span class="chip">${icon('pin')} Atención local</span>
+          <span class="chip">${icon('check')} Trato profesional</span>
+          <span class="chip">${icon('lock')} Privacidad como valor</span>
+        </div>
+        <div style="margin-top:1.6rem"><a class="btn btn-ghost btn-sm" href="#/nosotros">Conocer más de nosotros ${icon('arrow')}</a></div>
+      </div>
+      <div class="media" data-reveal><img src="${s.images.web}" alt="Equipo de cómputo con sitio web profesional" loading="lazy" width="1024" height="1024"></div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      ${sectionHead('Servicios', '¿En qué te podemos ayudar?', 'Seis áreas de servicio pensadas para personas y negocios. Toca cualquier tarjeta para ver el detalle.', true)}
+      <div class="grid grid-3">${s.services.map(serviceCard).join('')}</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      ${sectionHead('Productos destacados', 'Herramientas para tu privacidad', 'Dispositivos y sistemas configurados por nosotros, con orientación incluida.', true)}
+      <div class="grid" style="gap:1.4rem">${s.products.map(p => productCard(p)).join('')}</div>
+      <div class="center" style="margin-top:2rem" data-reveal><a class="btn btn-ghost" href="#/productos">Ver todos los productos ${icon('arrow')}</a></div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      ${sectionHead('¿Por qué elegirnos?', 'Cercanía local, visión moderna', '', true)}
+      <div class="grid grid-3">
+        ${[
+          ['pin','Atención local','Estamos en Pénjamo y damos servicio a domicilio en la zona y ciudades cercanas.'],
+          ['check','Soluciones personalizadas','Cada propuesta se adapta a tu necesidad real y a tu presupuesto.'],
+          ['chat','Tecnología accesible','Explicamos todo en lenguaje claro, sin tecnicismos innecesarios.'],
+          ['lock','Privacidad como valor','Cuidamos tus datos y te ayudamos a tener mayor control sobre ellos.'],
+          ['clock','Soporte continuo','Te acompañamos antes, durante y después de cada servicio.'],
+          ['shield','Atención profesional','Trabajo cuidadoso, explicaciones claras y precios sin sorpresas.']
+        ].map(v => '<div class="card" data-reveal><div class="icon-box">'+icon(v[0])+'</div><h3>'+v[1]+'</h3><p>'+v[2]+'</p></div>').join('')}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      ${sectionHead('Cómo trabajamos', 'Un proceso simple y transparente', '', true)}
+      <ol class="steps">
+        ${[
+          ['Contacto','Escríbenos por WhatsApp, llámanos o usa el formulario de contacto.'],
+          ['Diagnóstico','Entendemos tu necesidad. El diagnóstico puede ser sin costo al contratar el servicio.'],
+          ['Propuesta','Te presentamos una solución clara y una cotización sin sorpresas.'],
+          ['Implementación','Realizamos el trabajo con cuidado y te explicamos cada paso.'],
+          ['Soporte','Te acompañamos después del servicio, cuando lo necesites.']
+        ].map(p => '<li class="step" data-reveal><h3>'+p[0]+'</h3><p>'+p[1]+'</p></li>').join('')}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container split">
+      <div data-reveal>
+        ${sectionHead('Desarrollo web', 'Tu negocio en internet, con presencia profesional', '')}
+        <p class="lead" style="margin-top:-.4rem">Creamos sitios web profesionales e informativos para negocios de la región. Nos encargamos de todo para que tú solo te ocupes de tu negocio.</p>
+        <ul class="list-check" style="grid-template-columns:1fr 1fr;display:grid;gap:.55rem">
+          ${s.webFeatures.map(f => '<li>'+icon('check')+f+'</li>').join('')}
+        </ul>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#/paginas-web">Quiero una página web</a>
+          <a class="btn btn-ghost" href="${waLink('Hola, quiero solicitar una cotización de una página web.')}" target="_blank" rel="noopener">Solicitar cotización</a>
+        </div>
+      </div>
+      <div class="media" data-reveal><img src="${s.images.web}" alt="Laptop mostrando un sitio web profesional" loading="lazy" width="1024" height="1024"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split">
+      <div class="media" data-reveal><img src="${s.images.pos}" alt="Terminal de punto de venta moderno" loading="lazy" width="1024" height="1024"></div>
+      <div data-reveal>
+        ${sectionHead('Punto de venta', 'Cobra rápido, controla tu inventario', '')}
+        <p class="lead" style="margin-top:-.4rem">Instalamos y configuramos soluciones de punto de venta para comercios: hardware, software, capacitación y soporte, para que vendas con orden y confianza.</p>
+        <ul class="list-check">
+          <li>${icon('check')} Instalación y configuración completas</li>
+          <li>${icon('check')} Hardware y software adecuados a tu giro</li>
+          <li>${icon('check')} Administración de inventario</li>
+          <li>${icon('check')} Capacitación para ti y tu equipo</li>
+        </ul>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#/punto-de-venta">Conocer punto de venta</a>
+          <a class="btn btn-ghost" href="${waLink('Hola, quisiera solicitar información sobre punto de venta.')}" target="_blank" rel="noopener">Solicitar información</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      ${sectionHead('Privacidad digital', 'Mayor control sobre tu información', 'Herramientas y asesoría con enfoque educativo y profesional, sin promesas absolutas: trabajamos para reducir riesgos y darte mayor control.', true)}
+      <div class="grid grid-3">
+        <div class="card" data-reveal><div class="icon-box">${icon('lock')}</div><h3>Pixel + GrapheneOS</h3><p>Dispositivos configurados para una experiencia móvil con mayor privacidad y control.</p></div>
+        <div class="card" data-reveal><div class="icon-box">${icon('shield')}</div><h3>USB con Tails</h3><p>Sistema portátil enfocado en privacidad y seguridad para usos compatibles.</p></div>
+        <div class="card" data-reveal><div class="icon-box">${icon('chat')}</div><h3>Asesorías</h3><p>Orientación en ciberseguridad y configuración de antivirus empresariales.</p></div>
+      </div>
+      <div class="center" style="margin-top:2rem" data-reveal><a class="btn btn-ghost" href="#/privacidad">Explorar privacidad digital ${icon('arrow')}</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      ${sectionHead('Testimonios', 'Lo que dice nuestra comunidad', 'Este espacio está preparado para compartir comentarios reales de clientes.', true)}
+      ${ s.testimonials.length
+        ? '<div class="grid grid-3">'+s.testimonials.map(t => '<div class="card" data-reveal><p style="color:var(--text)">“'+t.text+'”</p><p style="margin-top:.8rem;color:var(--purple2);font-weight:600">'+t.name+'</p></div>').join('')+'</div>'
+        : emptyState('chat', 'Aún no hay comentarios', 'Tus comentarios pueden aparecer aquí. Cuando recibamos testimonios reales de clientes, los publicaremos en este espacio.') }
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      ${sectionHead('Blog', 'Aprende con Thr33', 'Artículos sencillos sobre tecnología, privacidad y consejos prácticos para tu negocio.', true)}
+      ${ s.blog.length
+        ? '<div class="grid grid-3">'+s.blog.map(b => '<article class="card" data-reveal><span class="chip">'+b.category+'</span><h3>'+b.title+'</h3><p>'+b.excerpt+'</p><p style="margin-top:.8rem;font-size:.8rem;color:var(--muted2)">'+b.date+' · '+b.author+'</p></article>').join('')+'</div>'
+        : emptyState('doc', 'Próximamente', 'Estamos preparando artículos útiles y fáciles de entender. Muy pronto podrás leerlos aquí.') }
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container" style="max-width:820px">
+      ${sectionHead('Preguntas frecuentes', 'Resolvemos tus dudas', '', true)}
+      ${faqList()}
+      <div class="center" style="margin-top:1.4rem" data-reveal><a class="btn btn-ghost btn-sm" href="#/faq">Ver todas las preguntas ${icon('arrow')}</a></div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container split">
+      <div data-reveal>
+        ${sectionHead('Contacto', 'Hablemos de lo que necesitas', '')}
+        <p class="lead" style="margin-top:-.4rem">Solicita una cotización sin compromiso. Respondemos por WhatsApp, teléfono o correo en nuestro horario de atención.</p>
+        <div style="margin-top:1.6rem">${contactCards()}</div>
+      </div>
+      <div>${contactForm()}</div>
+    </div>
+  </section>
+
+  ${ctaBand('¿Listo para acercar la tecnología a tu vida?', 'Escríbenos hoy y recibe orientación clara y profesional para tu caso.', 'Solicitar cotización', '#/contacto')}
+  `;
+}
+
+function pageServices(){
+  return `
+  <header class="page-head"><div class="container">
+    <span class="eyebrow" data-reveal>Servicios</span>
+    <h1 data-reveal>Soluciones claras para cada necesidad</h1>
+    <p class="lead" data-reveal>Explora nuestras categorías de servicio. Si no encuentras lo que buscas, pregúntanos: con gusto te orientamos.</p>
+  </div></header>
+  <section class="section" style="padding-top:1rem">
+    <div class="container grid" style="gap:1.6rem">
+      ${SITE.services.map(s => `
+      <article class="card" style="padding:2rem" data-reveal>
+        <div style="display:flex;gap:1.1rem;align-items:flex-start;flex-wrap:wrap">
+          <div class="icon-box">${icon(s.icon)}</div>
+          <div style="flex:1;min-width:240px">
+            <h3 style="font-size:1.3rem;margin:0">${s.title}</h3>
+            <p style="margin-top:.4rem">${s.desc}</p>
+          </div>
+          <a class="btn btn-ghost btn-sm" href="${waLink('Hola, me interesa el servicio de '+s.title+'. ¿Me pueden informar?')}" target="_blank" rel="noopener">Solicitar servicio</a>
+        </div>
+        <ul class="list-check" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr));display:grid;gap:.6rem;margin-top:1.3rem">
+          ${s.items.map(it => '<li>'+icon('check')+'<span>'+it+(s.explain && s.explain[it] ? ' <em style="color:var(--purple2);font-style:normal">· '+s.explain[it]+'</em>' : '')+'</span></li>').join('')}
+        </ul>
+        ${s.note ? '<p style="margin-top:1rem;font-size:.85rem;color:var(--purple2)">* '+s.note+'</p>' : ''}
+      </article>`).join('')}
+    </div>
+  </section>
+  ${ctaBand('¿No sabes qué servicio necesitas?', 'Cuéntanos tu situación y te proponemos la solución adecuada.', 'Solicitar cotización', '#/contacto')}
+  `;
+}
+
+function pageProducts(){
+  const cats = ["Privacidad", "Tecnología"];
+  return `
+  <header class="page-head"><div class="container">
+    <span class="eyebrow" data-reveal>Productos</span>
+    <h1 data-reveal>Productos seleccionados por Thr33</h1>
+    <p class="lead" data-reveal>Dispositivos y sistemas preparados por nosotros, con orientación incluida. Solicita información sin compromiso.</p>
+  </div></header>
+  <section class="section" style="padding-top:1rem">
+    <div class="container grid" style="gap:1.6rem">
+      ${cats.map(c => {
+        const list = SITE.products.filter(p => p.cat === c);
+        return '<div data-reveal><span class="eyebrow" style="margin-bottom:1rem;display:inline-flex">Categoría · '+c+'</span>' +
+          (list.length ? '<div class="grid" style="gap:1.6rem">'+list.map(p => productCard(p, true)).join('')+'</div>'
+          : emptyState('cpu', 'Próximamente', 'Muy pronto agregaremos productos de esta categoría. La estructura ya está lista para recibirlos.')) + '</div>';
+      }).join('')}
+    </div>
+  </section>
+  ${ctaBand('¿Buscas algo específico?', 'Cuéntanos qué necesitas y te orientamos sobre la mejor opción para ti.', 'Solicitar información')}
+  `;
+}
+
+function pageWeb(){
+  return `
+  <header class="page-head"><div class="container">
+    <span class="eyebrow" data-reveal>Desarrollo web</span>
+    <h1 data-reveal>Páginas web profesionales para tu negocio</h1>
+    <p class="lead" data-reveal>Sitios web profesionales e informativos para negocios de Pénjamo y la región. Nos encargamos de todo: diseño, desarrollo, dominio, hosting y capacitación.</p>
+    <div class="hero-cta" data-reveal>
+      <a class="btn btn-primary" href="${waLink('Hola, quiero solicitar una cotización de una página web.')}" target="_blank" rel="noopener">Solicitar cotización</a>
+      <a class="btn btn-ghost" href="#/contacto">Quiero una página web</a>
+    </div>
+  </div></header>
+  <section class="section" style="padding-top:1rem">
+    <div class="container split">
+      <div class="media" data-reveal><img src="${SITE.images.web}" alt="Sitio web profesional en laptop" loading="lazy" width="1024" height="1024"></div>
+      <div data-reveal>
+        <h2 class="title" style="font-size:1.6rem">Todo incluido, sin complicaciones</h2>
+        <p class="lead">Tu página lista para recibir clientes, con lo necesario para aparecer en búsquedas locales y atenderte por WhatsApp.</p>
+        <ul class="list-check" style="grid-template-columns:1fr 1fr;display:grid">
+          ${SITE.webFeatures.map(f => '<li>'+icon('check')+f+'</li>').join('')}
+        </ul>
+      </div>
+    </div>
+  </section>
+  <section class="section section-alt">
+    <div class="container">
+      ${sectionHead('Ideal para', '¿A quién le sirve una página web?', '', true)}
+      <div class="grid grid-4">
+        ${[['home','Comercios locales','Tiendas, restaurantes y servicios que quieren ser encontrados en internet.'],
+           ['briefcase','Profesionistas','Abogados, contadores, consultores y más, con presencia seria.'],
+           ['cpu','Startups y emprendedores','Una landing page clara para validar y presentar tu proyecto.'],
+           ['globe','PyMEs','Sitios corporativos que generan confianza en clientes y proveedores.']]
+        .map(v => '<div class="card" data-reveal><div class="icon-box">'+icon(v[0])+'</div><h3>'+v[1]+'</h3><p>'+v[2]+'</p></div>').join('')}
+      </div>
+      <p class="center" style="margin-top:2rem;color:var(--muted);font-size:.92rem" data-reveal>¿Quieres saber cuánto cuesta tu página? <a href="${waLink('Hola, quiero una cotización de página web para mi negocio.')}" target="_blank" rel="noopener" style="color:var(--purple2);font-weight:600">Solicita una cotización</a> sin compromiso.</p>
+    </div>
+  </section>
+  ${ctaBand('Lleva tu negocio a internet', 'Diseño profesional, dominio, hosting, correo empresarial, SEO local y más.', 'Quiero una página web', waLink('Hola, quiero una página web para mi negocio.'))}
+  `;
+}
+
+function pagePOS(){
+  return `
+  <header class="page-head"><div class="container">
+    <span class="eyebrow" data-reveal>Punto de venta</span>
+    <h1 data-reveal>Soluciones de punto de venta para tu comercio</h1>
+    <p class="lead" data-reveal>Instalación, configuración, hardware, software, capacitación y soporte para que tu negocio cobre rápido y controle su inventario.</p>
+    <div class="hero-cta" data-reveal>
+      <a class="btn btn-primary" href="${waLink('Hola, quisiera solicitar información sobre punto de venta.')}" target="_blank" rel="noopener">Solicitar información</a>
+      <a class="btn btn-ghost" href="#/contacto">Solicitar cotización</a>
+    </div>
+  </div></header>
+  <section class="section" style="padding-top:1rem">
+    <div class="container split">
+      <div data-reveal>
+        <h2 class="title" style="font-size:1.6rem">¿Qué incluye nuestro servicio?</h2>
+        <ul class="list-check">
+          ${SITE.posFeatures.map(f => '<li>'+icon('check')+'<span><strong style="color:var(--text)">'+f+'</strong>'+(
+            {Instalación:' de tu sistema en el equipo de tu negocio.',
+             Configuración:' de productos, precios, usuarios y tickets.',
+             Hardware:' adecuado: equipo, impresora de tickets, cajón y más.',
+             Software:' según tu giro; podemos implementar soluciones como Eleventa cuando corresponda.',
+             Capacitación:' para ti y tu equipo, hasta que te sientas seguro.',
+             Soporte:' cuando lo necesites, presencial o remoto.',
+             ['Administración de inventario']:' para saber qué tienes, qué se vende y qué reponer.'}[f] || '')+'</span></li>').join('')}
+        </ul>
+        <p style="margin-top:1.2rem;font-size:.88rem;color:var(--muted2)" data-reveal>Nota: Thr33 IT Solutions implementa y da soporte a software de punto de venta; no desarrollamos software POS propio.</p>
+      </div>
+      <div class="media" data-reveal><img src="${SITE.images.pos}" alt="Terminal de punto de venta" loading="lazy" width="1024" height="1024"></div>
+    </div>
+  </section>
+  ${ctaBand('Moderniza tu mostrador', 'Un punto de venta bien configurado ahorra tiempo y evita errores.', 'Solicitar información', waLink('Hola, quisiera información sobre punto de venta para mi comercio.'))}
+  `;
+}
+
+function pagePrivacy(){
+  return `
+  <header class="page-head"><div class="container">
+    <span class="eyebrow" data-reveal>Privacidad y seguridad digital</span>
+    <h1 data-reveal>Tu información, bajo tu control</h1>
+    <p class="lead" data-reveal>En Thr33 creemos que la privacidad es un valor. Ofrecemos herramientas, configuraciones y asesoría para que tengas mayor control sobre tus datos y reduzcas tu exposición innecesaria en línea.</p>
+  </div></header>
+  <section class="section" style="padding-top:1rem">
+    <div class="container">
+      <div class="grid" style="gap:1.6rem">
+        ${SITE.products.filter(p => p.cat === 'Privacidad').map(p => productCard(p, true)).join('')}
+      </div>
+      <div class="grid grid-3" style="margin-top:1.6rem">
+        <div class="card" data-reveal><div class="icon-box">${icon('chat')}</div><h3>Asesorías de ciberseguridad</h3><p>Orientación clara para proteger tus cuentas, dispositivos y hábitos digitales, en casa o en tu negocio.</p></div>
+        <div class="card" data-reveal><div class="icon-box">${icon('shield')}</div><h3>Antivirus empresariales</h3><p>Configuración de soluciones profesionales como Kaspersky, ESET y Bitdefender para proteger los equipos de tu organización.</p></div>
+        <div class="card" data-reveal><div class="icon-box">${icon('monitor')}</div><h3>Seguridad de dispositivos</h3><p>Configuraciones enfocadas en privacidad y seguridad para tus equipos, con respaldos y buenas prácticas.</p></div>
+      </div>
+      <div class="empty" style="margin-top:1.6rem;border-style:solid;background:rgba(124,58,237,.06)" data-reveal>
+        <h3 style="color:var(--purple2)">Nuestro enfoque</h3>
+        <p>Hablamos de privacidad con seriedad y sin promesas absolutas: ningún sistema garantiza anonimato o seguridad totales. Nuestro trabajo es reducir riesgos, fortalecer tu configuración y darte mayor control sobre tu vida digital.</p>
+      </div>
+    </div>
+  </section>
+  ${ctaBand('¿Dudas sobre tu privacidad digital?', 'Escucha orientación profesional y sin tecnicismos para dar tus primeros pasos.', 'Solicitar asesoría', waLink('Hola, me interesa una asesoría de privacidad digital.'))}
+  `;
+}
+
+function pageAbout(){
+  return `
+  <header class="page-head"><div class="container">
+    <span class="eyebrow" data-reveal>Nosotros</span>
+    <h1 data-reveal>Tecnología con raíz local</h1>
+    <p class="lead" data-reveal>Somos una empresa tecnológica nacida en Pénjamo, Guanajuato, con la intención de acercar herramientas modernas a nuestra comunidad.</p>
+  </div></header>
+  <section class="section" style="padding-top:1rem">
+    <div class="container">
+      <div class="split" style="margin-bottom:3rem">
+        <div data-reveal>
+          <h2 class="title" style="font-size:1.6rem">Por qué nació Thr33 IT Solutions</h2>
+          <p class="lead">Vimos que muchas personas y negocios de nuestra zona quedan fuera del acceso a tecnología moderna: equipos lentos sin mantenimiento, comercios sin presencia en internet, datos sin respaldar y dudas sin quién las responda en lenguaje claro.</p>
+          <p class="lead" style="margin-top:1rem">Thr33 IT Solutions nació para cerrar esa brecha: traer el mundo moderno a Pénjamo y sus alrededores, con servicio cercano, profesional y a precios justos.</p>
+        </div>
+        <div class="media" data-reveal><svg style="width:100%;height:100%;min-height:260px;color:var(--purple);opacity:.5;background:var(--surface)" aria-hidden="true"><use href="#iso"/></svg></div>
+      </div>
+      <div class="grid grid-2" style="margin-bottom:1.6rem">
+        <div class="card" data-reveal><span class="eyebrow">Misión</span><p style="margin-top:.7rem;font-size:1rem;color:var(--text)">Llevamos la innovación tecnológica a manos de cualquier persona: emprendedores, comerciantes, negocios pequeños y startups de Pénjamo y de las zonas alejadas de las grandes ciudades, acercando el mundo moderno a nuestra región.</p></div>
+        <div class="card" data-reveal><span class="eyebrow">Visión</span><p style="margin-top:.7rem;font-size:1rem;color:var(--text)">Convertirnos en el referente regional de soluciones tecnológicas, acercando herramientas, servicios y conocimiento que permitan a personas y negocios competir, crecer y protegerse en un mundo cada vez más digital.</p></div>
+      </div>
+      ${sectionHead('Valores', 'Lo que nos define', '', true)}
+      <div class="grid grid-3">
+        ${[['lock','Privacidad','Cuidamos tus datos y te ayudamos a protegerlos, con configuraciones enfocadas en darte mayor control.'],
+           ['globe','Libertad','Tecnología que te da opciones y autonomía, no que te ata.'],
+           ['shield','Soberanía tecnológica','Herramientas y conocimiento para que tú decidas cómo y dónde usar tu tecnología.']]
+        .map(v => '<div class="card value-card" data-reveal><div class="icon-box">'+icon(v[0])+'</div><h3>'+v[1]+'</h3><p>'+v[2]+'</p></div>').join('')}
+      </div>
+      <div class="center" style="margin-top:2.4rem" data-reveal>
+        <p class="lead" style="margin-inline:auto">También nos guían la confianza, la innovación, la accesibilidad y la responsabilidad en cada servicio.</p>
+      </div>
+    </div>
+  </section>
+  ${ctaBand('Conoce lo que podemos hacer por ti', 'Servicios, productos y asesoría con atención local y profesional.', 'Ver servicios', '#/servicios')}
+  `;
+}
+
+function pageBlog(){
+  return `
+  <header class="page-head"><div class="container">
+    <span class="eyebrow" data-reveal>Blog</span>
+    <h1 data-reveal>Ideas y consejos tecnológicos</h1>
+    <p class="lead" data-reveal>Un espacio para aprender tecnología en lenguaje sencillo: privacidad, mantenimiento, redes y herramientas para tu negocio.</p>
+  </div></header>
+  <section class="section" style="padding-top:1rem">
+    <div class="container">
+      ${ SITE.blog.length
+        ? '<div class="grid grid-3">'+SITE.blog.map(b => '<article class="card" data-reveal><span class="chip">'+b.category+'</span><h3>'+b.title+'</h3><p>'+b.excerpt+'</p><p style="margin-top:.8rem;font-size:.8rem;color:var(--muted2)">'+b.date+' · '+b.author+'</p></article>').join('')+'</div>'
+        : emptyState('doc', 'Próximamente', 'Estamos escribiendo nuestros primeros artículos. La estructura del blog ya está lista: muy pronto podrás leerlos aquí.') }
+    </div>
+  </section>`;
+}
+
+function pageFaq(){
+  return `
+  <header class="page-head"><div class="container">
+    <span class="eyebrow" data-reveal>FAQ</span>
+    <h1 data-reveal>Preguntas frecuentes</h1>
+    <p class="lead" data-reveal>Respuestas claras a las dudas más comunes. Si tu pregunta no está aquí, escríbenos.</p>
+  </div></header>
+  <section class="section" style="padding-top:1rem">
+    <div class="container" style="max-width:820px">${faqList()}</div>
+  </section>
+  ${ctaBand('¿Tienes otra pregunta?', 'Estamos para ayudarte con gusto y sin tecnicismos.', 'Escríbenos')}
+  `;
+}
+
+function pageContact(){
+  return `
+  <header class="page-head"><div class="container">
+    <span class="eyebrow" data-reveal>Contacto</span>
+    <h1 data-reveal>Hablemos hoy</h1>
+    <p class="lead" data-reveal>Elige el canal que prefieras: WhatsApp, teléfono, correo o el formulario. Te respondemos en horario de atención.</p>
+  </div></header>
+  <section class="section" style="padding-top:1rem">
+    <div class="container split" style="align-items:start">
+      <div>
+        ${contactCards()}
+        <div class="card" style="margin-top:1rem" data-reveal>
+          <div class="icon-box">${icon('pin')}</div>
+          <h3 style="font-size:1rem">Cobertura</h3>
+          <div class="tag-row">${SITE.coverage.map(c => '<span class="chip">'+c+'</span>').join('')}<span class="chip">Servicio a domicilio en Pénjamo y alrededores</span></div>
+        </div>
+        <div class="card" style="margin-top:1rem" data-reveal>
+          <div class="icon-box">${icon('card')}</div>
+          <h3 style="font-size:1rem">Formas de pago</h3>
+          <div class="pay-grid tag-row">${SITE.payments.map(p => '<span class="chip">'+icon('check')+p+'</span>').join('')}</div>
+        </div>
+        <div style="margin-top:1rem">${mapPlaceholder()}</div>
+      </div>
+      <div>
+        <h2 class="title" style="font-size:1.4rem" data-reveal>Solicitar cotización</h2>
+        ${contactForm()}
+      </div>
+    </div>
+  </section>`;
+}
+
+function page404(){
+  return `<section class="section" style="padding-top:12rem;text-align:center">
+    <div class="container"><span class="eyebrow">Error 404</span>
+    <h1 class="title">Página no encontrada</h1>
+    <p class="lead" style="margin-inline:auto">La ruta que buscas no existe. Vuelve al inicio para seguir navegando.</p>
+    <div class="hero-cta" style="justify-content:center"><a class="btn btn-primary" href="#/">Ir al inicio</a></div></div>
+  </section>`;
+}
+
+/* ==========================================================
+   ROUTER
+   ========================================================== */
+const ROUTES = {
+  "/": { title: "Thr33 IT Solutions | Tecnología al alcance de todos en Pénjamo, Guanajuato", desc: "Soporte técnico, hardware, redes, páginas web, punto de venta y privacidad digital en Pénjamo, Guanajuato.", render: pageHome },
+  "/servicios": { title: "Servicios de soporte, hardware y redes en Pénjamo | Thr33 IT Solutions", desc: "Mantenimiento de computadoras, redes, hardware y soluciones para negocios en Pénjamo, Guanajuato.", render: pageServices },
+  "/productos": { title: "Productos de privacidad y tecnología | Thr33 IT Solutions", desc: "Pixel con GrapheneOS y USB con Tails en Pénjamo, Guanajuato. Productos enfocados en privacidad.", render: pageProducts },
+  "/paginas-web": { title: "Páginas web profesionales en Pénjamo | Thr33 IT Solutions", desc: "Diseño de páginas web profesionales con dominio, hosting, correo empresarial y SEO local en Pénjamo.", render: pageWeb },
+  "/punto-de-venta": { title: "Punto de venta para negocios en Pénjamo | Thr33 IT Solutions", desc: "Instalación y configuración de punto de venta con capacitación y soporte en Pénjamo, Guanajuato.", render: pagePOS },
+  "/privacidad": { title: "Privacidad y seguridad digital | Thr33 IT Solutions", desc: "GrapheneOS, Tails, asesorías de ciberseguridad y antivirus empresariales en Pénjamo, Guanajuato.", render: pagePrivacy },
+  "/nosotros": { title: "Nosotros | Thr33 IT Solutions", desc: "Empresa tecnológica de Pénjamo, Guanajuato. Privacidad, libertad y soberanía tecnológica.", render: pageAbout },
+  "/blog": { title: "Blog | Thr33 IT Solutions", desc: "Artículos de tecnología y privacidad en lenguaje sencillo. Próximamente.", render: pageBlog },
+  "/faq": { title: "Preguntas frecuentes | Thr33 IT Solutions", desc: "Resuelve tus dudas sobre nuestros servicios, cobertura y métodos de pago.", render: pageFaq },
+  "/contacto": { title: "Contacto y cotización | Thr33 IT Solutions", desc: "Contacta a Thr33 IT Solutions por WhatsApp, teléfono o correo. Pénjamo, Guanajuato.", render: pageContact }
+};
+
+const app = document.getElementById('app');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObserver.unobserve(e.target); } });
+}, { threshold: .12, rootMargin: "0px 0px -40px 0px" });
+
+function currentPath(){
+  const h = location.hash.replace(/^#/, "");
+  return h === "" ? "/" : h;
+}
+
+function render(){
+  const path = currentPath();
+  const route = ROUTES[path];
+  app.innerHTML = route ? route.render() : page404();
+  document.title = route ? route.title : "Página no encontrada | Thr33 IT Solutions";
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc && route) metaDesc.setAttribute("content", route.desc);
+  document.querySelectorAll('[data-route]').forEach(a => {
+    if (a.dataset.route === path) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  });
+  bindInteractions();
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('[data-reveal]').forEach((el, i) => {
+    if (reduced) { el.classList.add('in'); return; }
+    el.style.transitionDelay = Math.min(i * 40, 320) + "ms";
+    revealObserver.observe(el);
+  });
+  window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+  closeMenu();
+}
+
+/* ==========================================================
+   INTERACCIONES (menú, FAQ, formulario)
+   ========================================================== */
+const menuBtn = document.getElementById('menuBtn');
+const menuPanel = document.getElementById('menuPanel');
+function closeMenu(){ menuPanel.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); }
+menuBtn.addEventListener('click', () => {
+  const open = menuPanel.classList.toggle('open');
+  menuBtn.setAttribute('aria-expanded', String(open));
+});
+
+function bindInteractions(){
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const open = item.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open));
+    });
+  });
+  const form = document.getElementById('contactForm');
+  if (form) bindForm(form);
+}
+
+function bindForm(form){
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const status = document.getElementById('formStatus');
+    const name = form.nombre.value.trim();
+    const phone = form.telefono.value.trim();
+    const mail = form.correo.value.trim();
+    const serv = form.servicio.value;
+    const msg = form.mensaje.value.trim();
+    let ok = true;
+    const setInvalid = (input, bad) => { input.closest('.field').classList.toggle('invalid', bad); if (bad) ok = false; };
+    setInvalid(form.nombre, name.length < 2);
+    setInvalid(form.telefono, phone !== "" && !/^[+()\-\s\d]{7,20}$/.test(phone));
+    setInvalid(form.correo, mail !== "" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail));
+    setInvalid(form.mensaje, msg.length < 5);
+    if (phone === "" && mail === "") { status.textContent = "Agrega un teléfono o un correo para poder responderte."; return; }
+    if (!ok) { status.textContent = "Revisa los campos marcados en rojo."; return; }
+
+    const texto = "Hola Thr33 IT Solutions, soy " + name + ".%0A" +
+      "Servicio de interés: " + serv + ".%0A" +
+      "Mensaje: " + msg + ".%0A" +
+      (phone ? "Teléfono: " + phone + ".%0A" : "") +
+      (mail ? "Correo: " + mail + "." : "");
+
+    status.textContent = "Enviando…";
+    if (SITE.forms.endpoint) {
+      /* Backend externo opcional (Formspree / Web3Forms / similar) */
+      try {
+        const r = await fetch(SITE.forms.endpoint, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify({ nombre: name, telefono: phone, correo: mail, servicio: serv, mensaje: msg }) });
+        status.textContent = r.ok ? "Gracias, " + name + ". Recibimos tu mensaje; te contactaremos pronto." : "No se pudo enviar. Intenta por WhatsApp.";
+      } catch (err) { status.textContent = "No se pudo enviar. Intenta por WhatsApp."; }
+    } else {
+      status.textContent = "Abriendo WhatsApp con tu mensaje listo…";
+      window.open(waLink(decodeURIComponent(texto).replace(/%0A/g, "\n")), "_blank", "noopener");
+    }
+  });
+}
+
+window.addEventListener('hashchange', render);
+window.addEventListener('DOMContentLoaded', render);
+if (document.readyState === 'complete' || document.readyState === 'interactive') render();
+</script>
+</body>
+</html>
+```
